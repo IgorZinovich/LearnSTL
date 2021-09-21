@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ihar/Projects/STDAlgorithm/main.cpp
+iostream
+-
+algorithm
+-
+random
+-
+vector
+-
+execution
+-
+iomanip
+-
+
