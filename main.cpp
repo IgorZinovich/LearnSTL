@@ -4,8 +4,9 @@
 #include <vector>
 #include <execution>
 #include <iomanip>
-#include <concepts>
-constexpr int SIZE = 100;
+#include <ranges>
+constexpr int SIZE = 30;
+
 
 class EightBytes
 {
@@ -55,49 +56,84 @@ public:
         std::cout  << "FourBytes\t" << Value() << "\n";
     }
 };
+
+template<typename T>
+concept HasIterator = requires(T a)
+{
+    {a.begin()};
+    {a.end()};
+};
+
+
 template<typename ...Args>
 void printLine(Args... args)
 {
     char sep = ' ';
     ((std::cout << args << sep), ...) << '\n';
 }
-template<typename T>
-concept Iterator = requires(T a)
-{
-    {a.begin()};
-    {a.end()};
-};
 
-template<Iterator T>
+template<HasIterator T>
+void printLine(const T& arr)
+{
+    std::for_each(arr.begin(), arr.end(), [](const T::value_type& el) { std::cout << el << ' ';});
+    std::cout<<'\n';
+}
+
+template<HasIterator T>
 void mismatch(const T& vec1, T vec2)
 {
     std::random_device rd;
     std::mt19937 mt(rd());
 
     //vec2[mt() % SIZE] = mt() % SIZE;
+    vec2.emplace_back(typename T::value_type{} + 5);
 
-    auto [iter1, iter2] = std::mismatch(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
-    printLine(*iter1,"!=", *iter2);
+    const auto& [iter1, iter2] = std::mismatch(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
+    if(iter1 != vec1.end() && iter2 != vec2.end())
+    {
+        printLine(*iter1,"!=", *iter2);    
+    }
+    else
+    {
+        printLine("Arrays are equal");
+    }
 }
 
-int main(int, char**) {
 
 
+template<HasIterator T>
+void adjacent(T& arr)
+{
+    const auto& it = std::adjacent_find(arr.begin(), arr.end());
+    printLine("Vector:");
+    printLine(arr);
+
+    if(it != arr.end())
+    {
+        printLine("element =", *it);
+    }
+
+}
+
+int main(int, char**)
+{
     std::random_device rd;
     std::mt19937 mt(rd());
 
     std::vector<int> arrayFirst;
-    std::vector<int> arraySecond;
+    std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
 
 
     for(int i = 0; i < SIZE; ++i)
     {
         arrayFirst.push_back(mt() % SIZE);
-        arraySecond.push_back(mt() % SIZE);
     }
+    
     int randomEl = mt() % SIZE;
 
-    mismatch(arrayFirst, arraySecond);
+    //mismatch(arrayFirst, arrayFirst);
+    adjacent(arrayFirst);
+    adjacent(arraySecond);
 
     return 0;
 }

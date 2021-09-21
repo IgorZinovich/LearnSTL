@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(algorithm main.cpp)
 
-target_link_libraries(algorithm -ltbb)
+target_link_libraries(algorithm PRIVATE -ltbb)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
