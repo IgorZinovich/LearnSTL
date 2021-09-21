@@ -74,7 +74,7 @@ void mismatch(const T& vec1, T vec2)
     std::random_device rd;
     std::mt19937 mt(rd());
 
-    vec2[mt() % SIZE] = mt() % SIZE;
+    //vec2[mt() % SIZE] = mt() % SIZE;
 
     auto [iter1, iter2] = std::mismatch(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
     printLine(*iter1,"!=", *iter2);
