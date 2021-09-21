@@ -4,6 +4,7 @@
 #include <vector>
 #include <execution>
 #include <iomanip>
+#include <concepts>
 constexpr int SIZE = 100;
 
 class EightBytes
@@ -60,6 +61,24 @@ void printLine(Args... args)
     char sep = ' ';
     ((std::cout << args << sep), ...) << '\n';
 }
+template<typename T>
+concept Iterator = requires(T a)
+{
+    {a.begin()};
+    {a.end()};
+};
+
+template<Iterator T>
+void mismatch(const T& vec1, T vec2)
+{
+    std::random_device rd;
+    std::mt19937 mt(rd());
+
+    vec2[mt() % SIZE] = mt() % SIZE;
+
+    auto [iter1, iter2] = std::mismatch(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
+    printLine(*iter1,"!=", *iter2);
+}
 
 int main(int, char**) {
 
@@ -67,15 +86,18 @@ int main(int, char**) {
     std::random_device rd;
     std::mt19937 mt(rd());
 
-    std::vector<int> array;
+    std::vector<int> arrayFirst;
+    std::vector<int> arraySecond;
+
 
     for(int i = 0; i < SIZE; ++i)
     {
-        array.push_back(mt() % SIZE);
+        arrayFirst.push_back(mt() % SIZE);
+        arraySecond.push_back(mt() % SIZE);
     }
     int randomEl = mt() % SIZE;
 
-    printLine("Count =", std::count(array.cbegin(), array.cend(), randomEl), "Elements");
+    mismatch(arrayFirst, arraySecond);
 
     return 0;
 }
