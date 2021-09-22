@@ -5,6 +5,7 @@
 #include <execution>
 #include <iomanip>
 #include <ranges>
+#include <source_location>
 constexpr int SIZE = 30;
 
 
@@ -79,6 +80,16 @@ void printLine(const T& arr)
     std::cout<<'\n';
 }
 
+void printFunctionName(const std::source_location location = std::source_location::current())
+{
+    std::string function = location.function_name();
+    const auto& iterLast = std::find(function.begin(), function.end(), '(');
+    auto iterStart = std::find(function.begin(), iterLast, ' ');
+    std::string func_name;
+    std::move(++iterStart, iterLast, std::back_inserter(func_name));
+    std::cout << func_name << '\n';
+}
+
 template<HasIterator T>
 void mismatch(const T& vec1, T vec2)
 {
@@ -99,6 +110,20 @@ void mismatch(const T& vec1, T vec2)
     }
 }
 
+template<HasIterator T>
+void search(const T& vec1, T vec2)
+{
+    const auto& iter = std::search(vec1.begin(), vec1.end(), vec2.begin(), vec2.end());
+
+    if(iter != vec1.end())
+    {
+        printLine("Position:", std::distance(vec1.begin(), iter), "First Symbal:", *iter);
+    }
+    else
+    {
+        printLine("String doesn't contain substring");
+    }
+}
 
 
 template<HasIterator T>
@@ -112,6 +137,30 @@ void adjacent(T& arr)
     {
         printLine("element =", *it);
     }
+}
+
+template<HasIterator T>
+void find_end(const T& arr1, const T& arr2)
+{
+    printFunctionName();
+
+    const auto& iter = std::find_end(arr1.begin(), arr1.end(), arr2.begin(), arr2.end());
+    if(iter != arr1.end())
+    {
+        printLine("Position:", std::distance(arr1.begin(), iter), "First Symbal:", *iter);
+    }
+
+}
+
+template<HasIterator T>
+void find_first(const T& arr1, const T& arr2)
+{
+    printFunctionName();
+    const auto& iter = std::find_first_of(arr1.begin(), arr1.end(), arr2.begin(), arr2.end());
+    if(iter != arr1.end())
+    {
+        printLine("Position:", std::distance(arr1.begin(), iter), "First Symbal:", *iter);
+    }
 
 }
 
@@ -120,20 +169,40 @@ int main(int, char**)
     std::random_device rd;
     std::mt19937 mt(rd());
 
-    std::vector<int> arrayFirst;
-    std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
-
-
-    for(int i = 0; i < SIZE; ++i)
+    if constexpr(false)
     {
-        arrayFirst.push_back(mt() % SIZE);
-    }
-    
-    int randomEl = mt() % SIZE;
+        std::vector<int> arrayFirst;
+        std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
 
-    //mismatch(arrayFirst, arrayFirst);
-    adjacent(arrayFirst);
-    adjacent(arraySecond);
+
+        for(int i = 0; i < SIZE; ++i)
+        {
+            arrayFirst.push_back(mt() % SIZE);
+        }
+
+        int randomEl = mt() % SIZE;
+
+        mismatch(arrayFirst, arrayFirst);
+        adjacent(arrayFirst);
+        adjacent(arraySecond);
+    }
+
+    if constexpr(false)
+    {
+        std::string name = "My name is Ihar  ";
+        std::string searchWord = "Ihar";
+
+        search(name, searchWord);
+    }
+
+    if constexpr(true)
+    {
+        std::string name = "My r name is Ih ";
+        std::string searchWord = "Ihar";
+
+        find_first(name, searchWord);
+        find_end(name, searchWord);
+    }
 
     return 0;
 }
