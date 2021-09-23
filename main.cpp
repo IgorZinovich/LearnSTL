@@ -161,7 +161,30 @@ void find_first(const T& arr1, const T& arr2)
     {
         printLine("Position:", std::distance(arr1.begin(), iter), "First Symbal:", *iter);
     }
+}
 
+template<HasIterator T>
+void copy_bacward_1(T& arr1)
+{
+    printFunctionName();
+    T arr2 = T(arr1.size());
+    std::copy_backward(arr1.begin(), arr1.end(), arr2.end());
+    printLine("Vector1:");
+    printLine(arr1);
+    printLine("Vector2:");
+    printLine(arr2);
+}
+
+template<HasIterator T>
+void copy_bacward_2(const T& arr1)
+{
+    printFunctionName();
+    T arr2;
+    std::copy(arr1.rbegin(), arr1.rend(), std::back_inserter(arr2));
+    printLine("Vector1:");
+    printLine(arr1);
+    printLine("Vector2:");
+    printLine(arr2);
 }
 
 int main(int, char**)
@@ -171,20 +194,12 @@ int main(int, char**)
 
     if constexpr(false)
     {
-        std::vector<int> arrayFirst;
-        std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
-
-
-        for(int i = 0; i < SIZE; ++i)
-        {
-            arrayFirst.push_back(mt() % SIZE);
-        }
-
-        int randomEl = mt() % SIZE;
+        std::vector<int> arrayFirst(SIZE, 0);
+        std::generate(arrayFirst.begin(), arrayFirst.end(), [&mt](){return mt() % SIZE;});
+        std::generate_n(arrayFirst.begin(), 2*SIZE / 3, [n = 0]()mutable{return ++n;});
 
         mismatch(arrayFirst, arrayFirst);
         adjacent(arrayFirst);
-        adjacent(arraySecond);
     }
 
     if constexpr(false)
@@ -195,13 +210,20 @@ int main(int, char**)
         search(name, searchWord);
     }
 
-    if constexpr(true)
+    if constexpr(false)
     {
         std::string name = "My r name is Ih ";
         std::string searchWord = "Ihar";
 
         find_first(name, searchWord);
         find_end(name, searchWord);
+    }
+    if constexpr(true)
+    {
+         std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
+
+        copy_bacward_1(arraySecond);
+        copy_bacward_2(arraySecond);
     }
 
     return 0;
