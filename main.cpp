@@ -187,6 +187,24 @@ void copy_bacward_2(const T& arr1)
     printLine(arr2);
 }
 
+template<HasIterator T>
+void remove_copy_with_overlaping(T& arr1)
+{
+    printFunctionName();
+    printLine("Vector1:");
+    printLine(arr1);
+    try{
+        std::remove_copy_if(arr1.begin(), arr1.end(), arr1.begin(), [](const T::value_type& el){return el%2==0;} ); // I didn't get error, but source and dest shouldn't overlap
+    }
+    catch(const std::exception& ex)
+    {
+        printLine(ex.what());
+    }
+    
+    printLine("Vector2:");
+    printLine(arr1);
+}
+
 int main(int, char**)
 {
     std::random_device rd;
@@ -218,12 +236,19 @@ int main(int, char**)
         find_first(name, searchWord);
         find_end(name, searchWord);
     }
-    if constexpr(true)
+    if constexpr(false)
     {
          std::vector<int> arraySecond = {1, 2, 5, 5, 4, 4, 6, 6, 8};
 
         copy_bacward_1(arraySecond);
         copy_bacward_2(arraySecond);
+    }
+     if constexpr(true)
+    {
+        std::vector<int> arrayFirst(SIZE, 0);
+        std::generate(arrayFirst.begin(), arrayFirst.end(), [&mt](){return mt() % SIZE;});
+
+        remove_copy_with_overlaping(arrayFirst);
     }
 
     return 0;
